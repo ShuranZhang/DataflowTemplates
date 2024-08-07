@@ -66,7 +66,7 @@ public abstract class FileFormatFactorySpannerChangeStreamsToPubSub
   protected abstract Boolean includeSpannerSource();
 
   @Nullable
-  protected abstract String spannerDatabase();
+  protected abstract String spannerDatabaseId();
 
   @Nullable
   protected abstract String spannerInstanceId();
@@ -82,16 +82,15 @@ public abstract class FileFormatFactorySpannerChangeStreamsToPubSub
       case "AVRO":
         AvroCoder<com.google.cloud.teleport.v2.DataChangeRecord> coder =
             AvroCoder.of(com.google.cloud.teleport.v2.DataChangeRecord.class);
+        DataChangeRecordToAvroFn.Builder builder = new DataChangeRecordToAvroFn.Builder();
+        if (includeSpannerSource()) {
+          builder
+              .setSpannerDatabaseId(spannerDatabaseId())
+              .setSpannerInstanceId(spannerInstanceId());
+        }
         encodedRecords =
             records
-                .apply(
-                    "Write DataChangeRecord into AVRO",
-                    MapElements.via(
-                        new DataChangeRecordToAvroFn.Builder()
-                            .setIncludeSpannerSource(includeSpannerSource())
-                            .setSpannerDatabase(spannerDatabase())
-                            .setSpannerInstanceId(spannerInstanceId())
-                            .build()))
+                .apply("Write DataChangeRecord into AVRO", MapElements.via(builder.build()))
                 .apply(
                     "Convert encoded DataChangeRecord in AVRO to bytes to be saved into"
                         + " PubsubMessage.",
@@ -123,7 +122,7 @@ public abstract class FileFormatFactorySpannerChangeStreamsToPubSub
                     MapElements.via(
                         new DataChangeRecordToJsonTextFn.Builder()
                             .setIncludeSpannerSource(includeSpannerSource())
-                            .setSpannerDatabase(spannerDatabase())
+                            .setSpannerDatabaseId(spannerDatabaseId())
                             .setSpannerInstanceId(spannerInstanceId())
                             .build()))
                 .apply(
@@ -205,7 +204,7 @@ public abstract class FileFormatFactorySpannerChangeStreamsToPubSub
 
     public abstract WriteToPubSubBuilder setIncludeSpannerSource(Boolean value);
 
-    public abstract WriteToPubSubBuilder setSpannerDatabase(String value);
+    public abstract WriteToPubSubBuilder setSpannerDatabaseId(String value);
 
     public abstract WriteToPubSubBuilder setSpannerInstanceId(String value);
 

@@ -40,7 +40,7 @@ public abstract class WriteDataChangeRecordsToJson {
 
     private boolean includeSpannerResource = false;
 
-    private String spannerDatabase;
+    private String spannerDatabaseId;
 
     private String spannerInstanceId;
 
@@ -48,8 +48,8 @@ public abstract class WriteDataChangeRecordsToJson {
       return includeSpannerResource;
     }
 
-    public String spannerDatabase() {
-      return spannerDatabase;
+    public String spannerDatabaseId() {
+      return spannerDatabaseId;
     }
 
     public String spannerInstanceId() {
@@ -60,7 +60,7 @@ public abstract class WriteDataChangeRecordsToJson {
 
     private DataChangeRecordToJsonTextFn(Builder builder) {
       this.includeSpannerResource = builder.includeSpannerResource;
-      this.spannerDatabase = builder.spannerDatabase;
+      this.spannerDatabaseId = builder.spannerDatabaseId;
       this.spannerInstanceId = builder.spannerInstanceId;
     }
 
@@ -68,7 +68,7 @@ public abstract class WriteDataChangeRecordsToJson {
     public String apply(DataChangeRecord record) {
       if (includeSpannerSource()) {
         JsonElement jsonElement = gson.toJsonTree(record);
-        jsonElement.getAsJsonObject().addProperty("spannerDatabase", spannerDatabase());
+        jsonElement.getAsJsonObject().addProperty("spannerDatabaseId", spannerDatabaseId());
         jsonElement.getAsJsonObject().addProperty("spannerInstanceId", spannerInstanceId());
         return gson.toJson(jsonElement);
       }
@@ -77,7 +77,7 @@ public abstract class WriteDataChangeRecordsToJson {
 
     static class Builder {
       private boolean includeSpannerResource = false;
-      private String spannerDatabase;
+      private String spannerDatabaseId;
 
       private String spannerInstanceId;
 
@@ -86,8 +86,8 @@ public abstract class WriteDataChangeRecordsToJson {
         return this;
       }
 
-      public Builder setSpannerDatabase(String value) {
-        this.spannerDatabase = value;
+      public Builder setSpannerDatabaseId(String value) {
+        this.spannerDatabaseId = value;
         return this;
       }
 

@@ -84,7 +84,7 @@ public class WriteDataChangeRecordsToJsonTest {
     DataChangeRecordToJsonTextFn converter =
         new DataChangeRecordToJsonTextFn.Builder()
             .setIncludeSpannerSource(true)
-            .setSpannerDatabase("test-db")
+            .setSpannerDatabaseId("test-db")
             .setSpannerInstanceId("test-instance")
             .build();
     // First run the transform in a separate pipeline.
@@ -98,7 +98,8 @@ public class WriteDataChangeRecordsToJsonTest {
     String dataChangeRecordJsonStr = converter.apply(dataChangeRecord);
     assertThat(
         dataChangeRecordJsonStr,
-        containsString("\"spannerDatabase\":\"test-db\",\"spannerInstanceId\":\"test-instance\""));
+        containsString(
+            "\"spannerDatabaseId\":\"test-db\",\"spannerInstanceId\":\"test-instance\""));
 
     PAssert.that(dataChangeRecords).containsInAnyOrder(dataChangeRecordJsonStr);
 
