@@ -510,9 +510,7 @@ public final class FailsafeModJsonToTableRowTransformerTest implements Serializa
     expectedTableRow.set("_type_" + FLOAT64_PK_COL, "FLOAT64");
     expectedTableRow.set(INT64_PK_COL, INT64_RAW_VAL);
     expectedTableRow.set("_type_" + INT64_PK_COL, "INT64");
-    // The numeric value seems to be flaky which was introduced by previous cl. The investigation
-    // is tracked by b/305796905.
-    expectedTableRow.set(NUMERIC_PK_COL, 10.0);
+    expectedTableRow.set(NUMERIC_PK_COL, NUMERIC_RAW_VAL);
     expectedTableRow.set("_type_" + NUMERIC_PK_COL, "NUMERIC");
     expectedTableRow.set(STRING_PK_COL, STRING_RAW_VAL);
     expectedTableRow.set("_type_" + STRING_PK_COL, "STRING");
@@ -558,13 +556,7 @@ public final class FailsafeModJsonToTableRowTransformerTest implements Serializa
       expectedTableRow.set("_type_" + INT64_COL, "INT64");
       expectedTableRow.set(JSON_COL, JSON_RAW_VAL);
       expectedTableRow.set("_type_" + JSON_COL, "JSON");
-      // The numeric value seems to be flaky which was introduced by previous cl. The investigation
-      // is tracked by b/305796905.
-      if (valueCaptureType == ValueCaptureType.OLD_AND_NEW_VALUES && modType == ModType.UPDATE) {
-        expectedTableRow.set(NUMERIC_COL, NUMERIC_RAW_VAL);
-      } else {
-        expectedTableRow.set(NUMERIC_COL, 10.0);
-      }
+      expectedTableRow.set(NUMERIC_COL, NUMERIC_RAW_VAL);
       expectedTableRow.set("_type_" + NUMERIC_COL, "NUMERIC");
       expectedTableRow.set(STRING_COL, STRING_RAW_VAL);
       expectedTableRow.set("_type_" + STRING_COL, "STRING");

@@ -99,7 +99,7 @@ public final class BigQueryDynamicDestinationsTest {
 
   private static BigQueryDynamicDestinations bigQueryDynamicDestinations;
   private static TableRow tableRow;
-  private static KV<TableId, TableRow> tableIdToTableRow;
+  private static KV<String, TableRow> tableIdToTableRow;
   private static String spannerDatabaseName;
 
   private static final String typePrefix = "_type_";
@@ -127,7 +127,7 @@ public final class BigQueryDynamicDestinationsTest {
     tableRow.set(BigQueryUtils.BQ_CHANGELOG_FIELD_NAME_TABLE_NAME, TEST_SPANNER_TABLE);
     tableIdToTableRow =
         KV.of(
-            TableId.of(TEST_PROJECT, TEST_BIG_QUERY_DATESET, TEST_SPANNER_TABLE + "_changelog"),
+            TableId.of(TEST_PROJECT, TEST_BIG_QUERY_DATESET, TEST_SPANNER_TABLE + "_changelog").toString(),
             tableRow);
   }
 
@@ -207,7 +207,7 @@ public final class BigQueryDynamicDestinationsTest {
         TableId.of(TEST_PROJECT, TEST_BIG_QUERY_DATESET, TEST_SPANNER_TABLE + "_changelog");
     expectedTableRow.set(BigQueryUtils.BQ_CHANGELOG_FIELD_NAME_TABLE_NAME, TEST_SPANNER_TABLE);
     assertThat(bigQueryDynamicDestinations.getDestination(tableRowValueInSingleWindow))
-        .isEqualTo(KV.of(expectedTableId, expectedTableRow));
+        .isEqualTo(KV.of(expectedTableId.toString(), expectedTableRow));
   }
 
   @Test
@@ -225,7 +225,7 @@ public final class BigQueryDynamicDestinationsTest {
     fillTableRow();
     tableIdToTableRow =
         KV.of(
-            TableId.of(TEST_PROJECT, TEST_BIG_QUERY_DATESET, TEST_SPANNER_TABLE + "_changelog"),
+            TableId.of(TEST_PROJECT, TEST_BIG_QUERY_DATESET, TEST_SPANNER_TABLE + "_changelog").toString(),
             tableRow);
     String schemaStr = bigQueryDynamicDestinations.getSchema(tableIdToTableRow).toString();
     schemaStr =

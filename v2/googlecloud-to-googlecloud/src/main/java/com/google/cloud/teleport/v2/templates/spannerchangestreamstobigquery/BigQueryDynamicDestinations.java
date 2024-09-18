@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * destination table is inferred from the provided {@link TableRow}.
  */
 public final class BigQueryDynamicDestinations
-    extends DynamicDestinations<TableRow, KV<TableId, TableRow>> {
+    extends DynamicDestinations<TableRow, KV<String, TableRow>> {
 
   private static final Logger LOG = LoggerFactory.getLogger(BigQueryDynamicDestinations.class);
 
@@ -68,6 +68,14 @@ public final class BigQueryDynamicDestinations
     this.useStorageWriteApi = bigQueryDynamicDestinationsOptions.getUseStorageWriteApi();
   }
 
+  private String getTableIdToString(String bigQueryTableTemplate, TableRow tableRow) {
+    String bigQueryTableName =
+        BigQueryConverters.formatStringTemplate(bigQueryTableTemplate, tableRow);
+
+    TableId tableId = TableId.of(bigQueryProject, bigQueryDataset, bigQueryTableName);
+    return tableId.toString();
+  }
+
   private TableId getTableId(String bigQueryTableTemplate, TableRow tableRow) {
     String bigQueryTableName =
         BigQueryConverters.formatStringTemplate(bigQueryTableTemplate, tableRow);
@@ -76,13 +84,13 @@ public final class BigQueryDynamicDestinations
   }
 
   @Override
-  public KV<TableId, TableRow> getDestination(ValueInSingleWindow<TableRow> element) {
+  public KV<String, TableRow> getDestination(ValueInSingleWindow<TableRow> element) {
     TableRow tableRow = element.getValue();
-    return KV.of(getTableId(bigQueryTableTemplate, tableRow), tableRow);
+    return KV.of(getTableIdToString(bigQueryTableTemplate, tableRow), tableRow);
   }
 
   @Override
-  public TableDestination getTable(KV<TableId, TableRow> destination) {
+  public TableDestination getTable(KV<String, TableRow> destination) {
     TableId tableId = getTableId(bigQueryTableTemplate, destination.getValue());
     String tableName =
         String.format("%s:%s.%s", tableId.getProject(), tableId.getDataset(), tableId.getTable());
@@ -91,7 +99,7 @@ public final class BigQueryDynamicDestinations
   }
 
   @Override
-  public TableSchema getSchema(KV<TableId, TableRow> destination) {
+  public TableSchema getSchema(KV<String, TableRow> destination) {
     TableRow tableRow = destination.getValue();
     // Get List<TableFieldSchema> for both user columns and metadata columns.
     List<TableFieldSchema> fields = getFields(tableRow);
